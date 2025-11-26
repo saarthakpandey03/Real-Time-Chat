@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Time Chat</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(180deg, #071026, #071629);
+            font-family: 'Inter', sans-serif;
+            color: #e8eef7;
+            display: flex;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .chat-box {
+            width: 100%;
+            max-width: 750px;
+            height: 85vh;
+            background: rgba(255,255,255,0.04);
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .chat-header {
+            padding: 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        /* Message Area */
+        #display {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Message Bubbles */
+        .bubble {
+            max-width: 70%;
+            padding: 12px 14px;
+            border-radius: 14px;
+            line-height: 1.4;
+            font-size: 15px;
+        }
+
+        /*Sender (YOU) */
+        .me {
+            align-self: flex-end;
+            background: linear-gradient(90deg, #6ee7b7, #7dd3fc);
+            color: #022;
+            border-bottom-right-radius: 6px;
+        }
+
+        /*Receiver (OTHER USER) */
+        .other {
+            align-self: flex-start;
+            background: rgba(255,255,255,0.05);
+            color: #d5e2f2;
+            border-bottom-left-radius: 6px;
+        }
+
+        .sender-name {
+            font-weight: 700;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 6px;
+            display: block;
+        }
+
+        /* Composer */
+        .composer {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            gap: 10px;
+        }
+
+        .composer input {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .composer button {
+            padding: 14px 18px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(90deg, #6ee7b7, #7dd3fc);
+            color: #022;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="chat-box">
+
+    <div class="chat-header">
+        Room: {{room}}
+    </div>
+
+    <!-- Messages -->
+    <div id="display"></div>
+
+    <!-- Composer -->
+    <form id="post-form" class="composer">
+        {% csrf_token %}
+        <input type="hidden" id="username" value="{{username}}">
+        <input type="hidden" id="room_id" value="{{room_details.id}}">
+
+        <input type="text" id="message" placeholder="Type a message..." autocomplete="off">
+        <button type="submit">Send</button>
+    </form>
+
+</div>
+
+<!-- Live Messages Loader -->
+<script>
+$(document).ready(function(){
+
+    function loadMessages(){
+        $.ajax({
+            type: 'GET',
+            url : "/getMessages/{{room}}/",
+            success: function(response){
+                $("#display").empty();
+
+                response.messages.forEach(msg => {
+                    let bubbleClass = msg.user === "{{username}}" ? "me" : "other";
+
+                    let temp = `
+                        <div class="bubble ${bubbleClass}">
+                            <strong class="sender-name">${msg.user}</strong><br>
+                            ${msg.value}
+                            <span class="timestamp">${msg.date}</span>
+                        </div>
+                    `;
+
+                    $("#display").append(temp);
+                });
+
+                // Auto-scroll to bottom
+                // $("#display").scrollTop($("#display")[0].scrollHeight);
+            }
+        });
+    }
+
+    setInterval(loadMessages, 800);
+
+});
+</script>
+
+<!-- Send Message -->
+<script>
+$(document).on('submit','#post-form',function(e){
+    e.preventDefault();
+
+    $.ajax({
+        type:'POST',
+        url:'/send/',
+        data:{
+            username:$('#username').val(),
+            room_id:$('#room_id').val(),
+            message:$('#message').val(),
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+        },
+        success:function(){
+            $('#message').val("");
+        }
+    });
+});
+</script>
+
+</body>
+</html>

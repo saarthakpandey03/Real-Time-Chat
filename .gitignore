@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.so
+
+# Django local files
+db.sqlite3
+*.log
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# Byte-compiled
+*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Static files collected (generated automatically)
+staticfiles/
+
+# Migrations cache (keep migration files but ignore pycache)
+**/migrations/__pycache__/
+
+# Environment / secrets
+.env

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Join Room — Realtime Chat</title>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+    --accent:#6ee7b7;
+    --accent-2:#7dd3fc;
+    --glass: rgba(255,255,255,0.05);
+    --muted:#9ba8b7;
+}
+
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Inter',sans-serif;
+    background: linear-gradient(180deg,#071026,#071629);
+    color:white;
+    padding:24px;
+}
+
+.card{
+    width:100%;
+    max-width:420px;
+    padding:32px;
+    border-radius:20px;
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,0.06);
+    box-shadow:0 8px 30px rgba(0,0,0,0.55);
+    text-align:center;
+}
+
+.card h2{
+    margin:0 0 5px 0;
+    font-size:24px;
+    font-weight:700;
+}
+
+.card p{
+    margin:0 0 18px 0;
+    color:var(--muted);
+    font-size:14px;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    margin-left: -13px;
+    margin-bottom:14px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.12);
+    background:rgba(255,255,255,0.08);
+    color:white;
+    font-size:15px;
+    outline:none;
+    transition:0.2s;
+}
+
+input::placeholder{
+    color:#94a3b8;
+}
+
+input:focus{
+    border-color: var(--accent-2);
+    box-shadow:0 0 10px rgba(125,211,252,0.35);
+    background:rgba(255,255,255,0.15);
+}
+
+button{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:none;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:700;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    color:#022;
+}
+
+button:hover{
+    opacity:0.92;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h2>Enter a Room</h2>
+    <p>Join or create a chat room instantly</p>
+
+    <form id="post-form" method="POST" action="checkview">
+        {% csrf_token %}
+        <input type="text" name="room_name" placeholder="Room Name" required>
+        <input type="text" name="username" placeholder="Your Username" required>
+        <button type="submit">Enter Room</button>
+    </form>
+
+</div>
+
+</body>
+</html>
